@@ -1,0 +1,112 @@
+﻿@model MyTasksNetCore.Core.ViewModels.TaskJobsViewModel
+@{
+    ViewData["Title"] = "TaskJobs";
+}
+
+<h1 class="mb-3">My Tasks</h1>
+
+<form id="filterForm">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+            @Html.TextBoxFor(x => x.FilterTasks.Title, new { @class = "form-control mb-2", placeholder = "Title" })
+        </div>
+        <div class="col-auto">
+            @Html.DropDownListFor(x => x.FilterTasks.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "-- category --", new { @class = "form-control mb-2" })
+        </div>
+        <div class="col-auto">
+            <div class="form-check mb-2">
+                @Html.CheckBoxFor(x => x.FilterTasks.IsExecuted, new { @class = "form-check-label" })
+
+                @Html.LabelFor(x => x.FilterTasks.IsExecuted)
+
+            </div>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-2">Search</button>
+        </div>
+    </div>
+</form>
+
+
+<div>
+    @await Html.PartialAsync("_TaskJobsTable.cshtml", Model.TaskJobs)
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#filterForm').submit(function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("TaskJobs", "TaskJob")",
+                    data: $(this).serialize(),
+                    success: function (data) {
+                        $('#tasksTable').html(data);
+                    },
+                    error: function (data) {
+                        alert(data.message)
+                    },
+                    dataType: "html"
+                });
+
+                return false;
+            });
+
+        });
+
+        function finishTaskJob(id, btn) {
+            if (!confirm("Are you sure close task?"))
+                return;
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Finish", "TaskJob")",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.success) {
+                        var row = btn.parentNode.parentNode;
+                        row.parentNode.removeChild(row);
+                    }
+                    else {
+                        alert(data.message)
+                    }
+                },
+                error: function (data) {
+                    alert(data.message)
+
+                 },
+                dataType: "json"
+            });
+        }
+
+        function deleteTaskJob(id, btn) {
+            if (!confirm("Are you sure delete task?"))
+                return;
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("Delete", "TaskJob")",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    if (data.success) {
+                        var row = btn.parentNode.parentNode;
+                        row.parentNode.removeChild(row);
+                    }
+                    else {
+                        alert(data.message)
+                    }
+                },
+                error: function (data) {
+                    alert(data.message)
+
+                 },
+                dataType: "json"
+            });
+        }
+    </script>
+}

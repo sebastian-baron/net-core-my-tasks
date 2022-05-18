@@ -1,0 +1,48 @@
+﻿@model IEnumerable<MyTasksNetCore.Core.Models.Domains.TaskJob>
+
+
+<div id="tasksTable">
+    <table class="table table-bordered mt-3">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Category</th>
+                <th scope="col">Term</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var task in Model)
+                {
+                    <tr>
+                        <td><a href="@Url.Action("TaskJob", "TaskJob", new { id = task.Id })" class="font-weight-bold">@task.Title</a></td>
+                        <td>@task.Description</td>
+                        <td>@task.Category.Name</td>
+                        <td>@task.Term?.ToString("dd-MM-yyyy")</td>
+                        <td>
+                            @if (!task.IsExecuted)
+                            {
+                                <button class="btn btn-success btn-sm mr-2" onclick="finishTaskJob('@task.Id', this)">
+                                    Finish
+                                </button>
+                            }
+                            <button class="btn btn-danger btn-sm" onclick="deleteTaskJob('@task.Id', this)">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td class="text-center" colspan="5">There are no tasks to be performed.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>

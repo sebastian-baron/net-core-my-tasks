@@ -1,0 +1,65 @@
+﻿@model MyTasksNetCore.Core.ViewModels.TaskJobViewModel
+
+@{
+    ViewData["Title"] = Model.Heading;
+}
+
+<h1>TaskJob</h1>
+
+@using (Html.BeginForm("TaskJob", "TaskJob"))
+{
+    <p class="alert alert-info mt-4 mb-4">Field Title, Description and Category are <b>required</b></p>
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.TaskJob.Id)
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.TaskJob.Title)
+        @Html.TextBoxFor(x => x.TaskJob.Title, new { @class = "form-control", autofocus = "autofocus" })
+        @Html.ValidationMessageFor(x => x.TaskJob.Title)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.TaskJob.Description)
+        @Html.TextBoxFor(x => x.TaskJob.Description, new { @class = "form-control" })
+        @Html.ValidationMessageFor(x => x.TaskJob.Description)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.TaskJob.CategoryId)
+        @Html.DropDownListFor(x => x.TaskJob.CategoryId, new SelectList(Model.Categories, "Id", "Name"), "-- choose --", new { @class = "form-control" })
+        @Html.ValidationMessageFor(x => x.TaskJob.CategoryId)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(x => x.TaskJob.Term)
+        @Html.TextBoxFor(x => x.TaskJob.Term, "{0:dd-MM-yyyy}", new { @class = "form-control", @id = "Term", autocomplete = "off" })
+        @Html.ValidationMessageFor(x => x.TaskJob.Term)
+    </div>
+
+    @if (Model.TaskJob.Id > 0)
+    {
+        <div class="form-check">
+            @Html.CheckBoxFor(x => x.TaskJob.IsExecuted, new { @class = "form-check-input" })
+            @Html.LabelFor(x => x.TaskJob.IsExecuted)
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary btn-lg mt-2">Save</button>
+
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#Term').datepicker({
+                format: "dd-MM-yyyy",
+                language: "pl",
+                multidate: false,
+                autoclose: true,
+                todayHighlight: true,
+                forceParse: false
+            });
+        });
+    </script>
+}
